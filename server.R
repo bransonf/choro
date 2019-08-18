@@ -8,6 +8,7 @@ library(tigris)
 library(sf)
 library(stringr)
 library(magrittr)
+library(dplyr)
 options(tigris_use_cache = TRUE, scipen = 8)
 
 # install census key
@@ -45,7 +46,7 @@ shinyServer(function(input, output) {
     # dynamic variables and table
     survey_vars <- reactive({
         dset <- switch(input$survey, "SF-1" = "sf1", "SF-3" = "sf3", "ACS-5" = "acs5", "ACS-1" = "acs1")
-        vars <- load_variables(input$year, dset, cache = TRUE)
+        vars <- tidycensus::load_variables(input$year, dset, cache = TRUE)
         return(vars)
     })
     
@@ -90,8 +91,16 @@ shinyServer(function(input, output) {
                 }
             }
             else{
-                data <- get_acs(tolower(input$geography), variables = q$variables, year = as.numierc(input$year), state = state, output = "wide", geometry = TRUE)
-                names(data) %<>% gsub("E","",.) # get rid of the Estimate 'E' in the var names
+                if(is.null(state)){
+                    if(input$geography == "State"){
+                        data <- left_join(state_laea, get_acs(tolower(input$geography), variables = q$variables, year = as.numeric(input$year), state = state, output = "wide"), by = "GEOID")
+                    }else if(input$geography == "County"){
+                        data <- left_join(county_laea, get_acs(tolower(input$geography), variables = q$variables, year = as.numeric(input$year), state = state, output = "wide"), by = "GEOID")
+                    }
+                }else{
+                    data <- get_acs(tolower(input$geography), variables = q$variables, year = as.numeric(input$year), state = state, output = "wide", geometry = TRUE)
+                }
+                    names(data) %<>% gsub("E","",.) # get rid of the Estimate 'E' in the var names
             }
             
             # make the calculation

@@ -6,7 +6,11 @@ source('copy.R')
 shinyUI(navbarPage(HTML("<div><img src='conus.png' height='24px'> Choro</div>"), theme = "bootstrap.css", windowTitle = "Choro Mapping",
     tabPanel("Instructions", icon = icon('book'),
         titlePanel("Mapping Census Data"),
-        instruction_copy
+        fluidRow(
+            column(12,
+                instruction_copy
+            )
+        )
     ),
     tabPanel("Census Map", icon = icon('map-pin'),
         titlePanel('Create a Choropleth Map'),

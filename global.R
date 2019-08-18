@@ -1,4 +1,5 @@
 # global shiny functions
+library(tidycensus)
 
 # create a data cache of survey variables and all geometries... server side.
 cache <- function(){
