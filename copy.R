@@ -1,7 +1,6 @@
 # genereates copy
 
 instruction_copy <- HTML("Welcome to Choro, a web application for making choropleth maps.
-                         <img src='poverty_example.png' height='400px'>
                          <h3>Exploring the Data</h3>
                          <h4>Navigating Options</h4>
                          <p>First, select a survey you would like to make a map with. Then, choose a year. The latest year is chosen by default.
