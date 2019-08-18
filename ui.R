@@ -1,68 +1,41 @@
 library(shiny)
 library(DT)
 library(shinyWidgets)
+source('copy.R')
 
-shinyUI(navbarPage("Choro",
+shinyUI(navbarPage(HTML("<div><img src='conus.png' height='24px'> Choro</div>"), theme = "bootstrap.css", windowTitle = "Choro Mapping",
     tabPanel("Instructions", icon = icon('book'),
-        titlePanel("How to Map"),
-        h3("Mapping Census Data"),
-        h3("Using Your Own Data"),
-        "In order to use your own data, it needs to be arranged in a specific way. Currently, the following file formats are supported:
-        .shp/.dbf
-        .geojson/.json
-        "
+        titlePanel("Mapping Census Data"),
+        instruction_copy
     ),
-    tabPanel("Census Map", icon = icon('map'),
-        titlePanel('Create a Choropleth Map'), # Center this
+    tabPanel("Census Map", icon = icon('map-pin'),
+        titlePanel('Create a Choropleth Map'),
         fluidRow(
             column(3,
-                   numericInput("year", label = "Year", min = 2000, max = 2017, step = 1, value = 2017),
-                   pickerInput("survey", "Survey", c("Deccenial", "ACS-5", "ACS-3", "ACS-1"), "Deccenial"),
-                   pickerInput("state", "Region", c("All States", state.name), "All States"),
-                   pickerInput("geography", "Geography", c("State", "County", "Tract", "Block"), "State"),
-                   "Select A Variable or Define One",
-                   textInput("query", "Measurement", ""),
-                   "Control Parameters",
-                   
-                   "Choose a Breaks System",
-                   
-                   "Choose a Color Palette",
-                   
-                   "Custom Title and Legend Options",
-                   
-                   "Submit button",
-                   
-                   "Map Button",
-                   
-                   "Download Button"
-                   
+                   pickerInput("survey", "Pick A Survey", c("SF-1", "SF-3", "ACS-5", "ACS-1"), "SF-1"),
+                   uiOutput('year_dynamic'),
+                   pickerInput("state", "Region", c("All States", state.name), "All States", options = list(`live-search` = TRUE)),
+                   uiOutput('geog_dynamic'),
+                   textInput("query", "Calculation", ""),
+                   pickerInput('color', 'Color Scale', choices = list(
+                       Viridis = c("Viridis", "Magma", "Plasma", "Inferno", "Cividis"),
+                       ColorBrewer = c("YlOrRd", "YlOrBr", "YlGnBu", "YlGn", "Reds", "RdPu", "Purples", "PuRd", "PuBuGn", "PuBu", "OrRd", "Oranges", "Greys", "Greens", "GnBu", "BuPu", "BuGn", "Blues")
+                                                                 )
+                   ),
+                   actionButton("map", "Generate Map", icon('map'))
+                   #downloadImage("dl_map", label = "Download Image", inline = TRUE)
             ),
-            column(9, plotOutput("census_map")),
-            dataTableOutput("census_dt"),
-             "Download Button..."
+            column(9,
+                   plotOutput("census_map")
+            )
+            #downloadTable()
+        ),
+        fluidRow(
+            column(12,
+                HTML("</br>"),
+                dataTableOutput("census_dt", width = '100%')
+            )
         )
-    ),
-    # tabPanel("Custom Map", icon = icon('map', "r"),
-    #     titlePanel('Create a Choropleth Map'),
-    #     fluidRow(
-    #          column(3,
-    #             fileInput("shape_ul", "Upload a Shape"),
-    #             fileInput("data_ul", "Upload Data"),
-    #             "Control Parameters",
-    #             "Select A Variable",
-    #             "Choose a Breaks System",
-    #             "Choose a Color Palette",
-    #             "Custom Title and Legend Options",
-    #             "Submit button",
-    #             
-    #             "Map Button",
-    #             "Download Button"
-    #             
-    #          ),
-    #          column(9, plotOutput("custom_map")),
-    #          dataTableOutput("custom_dt")
-    #     )
-    # )
-    
+    )
     
 ))
