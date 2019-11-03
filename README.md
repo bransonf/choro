@@ -6,8 +6,7 @@ Install Docker
 
 Run:
 ```
-docker pull bransonf/choro
-docker run -p 80:3838 bransonf/choro
+docker run --rm -p 80:3838 bransonf/choro
 ```
 
 Open a browser at:
